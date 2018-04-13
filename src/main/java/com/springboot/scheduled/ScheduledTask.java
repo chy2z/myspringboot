@@ -109,18 +109,20 @@ public class ScheduledTask {
     @Async
     @Scheduled(fixedDelay=300000)
     public void redisSetnx1(){
-        RedisLockImpl redisLock = new RedisLockImpl(redisDao.getStringRedisTemplate());
-        String key="chyLock";
-        String threadName="lock-1";
-        while(debug) {
-            try {
-                long time = redisLock.lock(key, threadName);
-                Thread.sleep(100);
-                System.out.println(threadName+"：执行业务");
-                redisLock.unlock(key, time, threadName);
-                Thread.sleep(200);
-            } catch (Exception ex) {
-                System.out.println(ex);
+        if(debug) {
+            RedisLockImpl redisLock = new RedisLockImpl(redisDao.getStringRedisTemplate());
+            String key = "chyLock";
+            String threadName = "lock-1";
+            while (debug) {
+                try {
+                    long time = redisLock.lock(key, threadName);
+                    Thread.sleep(100);
+                    System.out.println(threadName + "：执行业务");
+                    redisLock.unlock(key, time, threadName);
+                    Thread.sleep(200);
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
             }
         }
     }
@@ -131,18 +133,20 @@ public class ScheduledTask {
     @Async
     @Scheduled(fixedDelay=300000)
     public void redisSetnx2(){
-        RedisLockImpl redisLock = new RedisLockImpl(redisDao.getStringRedisTemplate());
-        String key="chyLock";
-        String threadName="lock-2";
-        while(debug) {
-            try {
-                long time = redisLock.lock(key, threadName);
-                Thread.sleep(100);
-                System.out.println(threadName+"：执行业务");
-                redisLock.unlock(key, time, threadName);
-                Thread.sleep(200);
-            } catch (Exception ex) {
-                System.out.println(ex);
+        if(debug) {
+            RedisLockImpl redisLock = new RedisLockImpl(redisDao.getStringRedisTemplate());
+            String key = "chyLock";
+            String threadName = "lock-2";
+            while (debug) {
+                try {
+                    long time = redisLock.lock(key, threadName);
+                    Thread.sleep(100);
+                    System.out.println(threadName + "：执行业务");
+                    redisLock.unlock(key, time, threadName);
+                    Thread.sleep(200);
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
             }
         }
     }
@@ -153,21 +157,22 @@ public class ScheduledTask {
     @Async
     @Scheduled(fixedDelay=300000)
     public void redisSetnx3(){
-        RedisLockImpl redisLock = new RedisLockImpl(redisDao.getStringRedisTemplate());
-        String key="chyLock";
-        String threadName="lock-3";
-        while(debug) {
-            try {
-                long time = redisLock.lock(key, threadName);
-                Thread.sleep(100);
-                System.out.println(threadName+"：执行业务");
-                redisLock.unlock(key, time, threadName);
-                Thread.sleep(200);
-            } catch (Exception ex) {
-                System.out.println(ex);
+        if(debug) {
+            RedisLockImpl redisLock = new RedisLockImpl(redisDao.getStringRedisTemplate());
+            String key = "chyLock";
+            String threadName = "lock-3";
+            while (debug) {
+                try {
+                    long time = redisLock.lock(key, threadName);
+                    Thread.sleep(100);
+                    System.out.println(threadName + "：执行业务");
+                    redisLock.unlock(key, time, threadName);
+                    Thread.sleep(200);
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
             }
         }
     }
-
 
 }

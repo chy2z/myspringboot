@@ -5,6 +5,7 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -23,6 +24,8 @@ public class ZkWatchUtil implements Watcher {
     private ZooKeeper zk = null;
 
     private CountDownLatch connectedSemaphore = new CountDownLatch(1);
+
+    private String charSet="utf-8";
 
     /**
      * 连接Zookeeper
@@ -88,7 +91,7 @@ public class ZkWatchUtil implements Watcher {
      */
     public boolean createPath( String path, String data ) {
         try {
-            String zkPath =  this.zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+            String zkPath =  this.zk.create(path, data.getBytes(charSet), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             LOG.info( "节点创建成功, Path: " + zkPath + ", content: " + data );
             return true;
         } catch ( KeeperException e ) {
@@ -96,6 +99,10 @@ public class ZkWatchUtil implements Watcher {
                     + ", errMsg:" + e.getMessage(), e );
         } catch ( InterruptedException e ) {
             LOG.error( "节点创建失败, 发生 InterruptedException! path: " + path + ", data:" + data
+                    + ", errMsg:" + e.getMessage(), e );
+        }
+        catch (UnsupportedEncodingException e){
+            LOG.error( "节点创建失败, 发生KeeperException! path: " + path + ", data:" + data
                     + ", errMsg:" + e.getMessage(), e );
         }
         return false;
@@ -137,13 +144,17 @@ public class ZkWatchUtil implements Watcher {
      */
     public boolean writeData( String path, String data){
         try {
-            Stat stat = this.zk.setData(path, data.getBytes(), -1);
+            Stat stat = this.zk.setData(path, data.getBytes(charSet), -1);
             LOG.info( "更新数据成功, path：" + path + ", stat: " + stat );
             return true;
         } catch (KeeperException e) {
             LOG.error( "更新数据失败, 发生KeeperException! path: " + path + ", data:" + data
                     + ", errMsg:" + e.getMessage(), e );
         } catch (InterruptedException e) {
+            LOG.error( "更新数据失败, 发生InterruptedException! path: " + path + ", data:" + data
+                    + ", errMsg:" + e.getMessage(), e );
+        }
+        catch (UnsupportedEncodingException e){
             LOG.error( "更新数据失败, 发生InterruptedException! path: " + path + ", data:" + data
                     + ", errMsg:" + e.getMessage(), e );
         }
@@ -158,12 +169,16 @@ public class ZkWatchUtil implements Watcher {
     public String readData( String path ){
         String data = null;
         try {
-            data = new String( this.zk.getData( path, false, null ) );
+            data = new String(this.zk.getData( path, false, null ),charSet);
             LOG.info( "读取数据成功, path:" + path + ", content:" + data);
         } catch (KeeperException e) {
             LOG.error( "读取数据失败,发生KeeperException! path: " + path
                     + ", errMsg:" + e.getMessage(), e );
         } catch (InterruptedException e) {
+            LOG.error( "读取数据失败,发生InterruptedException! path: " + path
+                    + ", errMsg:" + e.getMessage(), e );
+        }
+        catch (UnsupportedEncodingException e){
             LOG.error( "读取数据失败,发生InterruptedException! path: " + path
                     + ", errMsg:" + e.getMessage(), e );
         }
