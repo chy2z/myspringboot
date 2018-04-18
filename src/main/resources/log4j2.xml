@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Configuration后面的status，OFF这个用于设置log4j2自身内部的信息输出，可以不设置，当设置成trace时，你会看到log4j2内部各种详细输出。
+ TRACE < DEBUG < INFO < WARN < ERROR < FATAL
+ -->
+<!--
+  monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数。
+-->
+<configuration status="off" monitorInterval="120">
+    <properties>
+        <!-- /data/logs/rattanapi -->
+        <!-- e:/log2s -->
+        <!--JVM启动参数 -Dapp.log.home=e:/log3s ${sys:app.log.home} -->
+        <property name="LOG_HOME">e:/log2s</property>
+    </properties>
+    <appenders>
+        <!-- Console -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <!-- tcp 传输日志到 logstash
+        <Socket name="Socket" protocol="TCP" host="localhost" port="5544">
+            <JsonLayout compact="true" eventEol="true" />
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %ex%msg%n"/>
+        </Socket>
+        -->
+
+        <!-- 所有 -->
+        <RollingRandomAccessFile name="rootAppeder"
+                                 fileName="${LOG_HOME}/rattan-server-park-api.log"
+                                 filePattern="${LOG_HOME}/$${date:yyyy-MM}/rattan-server-park-api-root-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %ex%msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+        <!--错误日志输出-->
+        <RollingRandomAccessFile name="errorAppeder"
+                                 fileName="${LOG_HOME}/rattan-server-park-api-error.log"
+                                 filePattern="${LOG_HOME}/$${date:yyyy-MM}/rattan-server-park-api-error-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %ex%msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+        <!--性能监控performance appeder-->
+        <RollingRandomAccessFile name="performanceAppender"
+                                 fileName="${LOG_HOME}/rattan-server-park-api-performance.log"
+                                 filePattern="${LOG_HOME}/$${date:yyyy-MM}/rattan-server-park-api-performance-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <MarkerFilter marker="performance" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+    </appenders>
+
+    <loggers>
+        <asyncRoot level="info">
+            <!-- tcp 传输日志到 logstash
+            <appender-ref ref="Socket"/> -->
+            <appender-ref ref="Console"/>
+            <appender-ref ref="rootAppeder"/>
+            <appender-ref ref="errorAppeder"/>
+            <appender-ref ref="performanceAppender"/>
+        </asyncRoot>
+    </loggers>
+</configuration>

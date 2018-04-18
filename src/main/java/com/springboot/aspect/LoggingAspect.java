@@ -21,6 +21,7 @@ public class LoggingAspect
 {
     protected final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    //logback写法
     //private Marker marker = MarkerFactory.getMarker("performance");
 
     /**
