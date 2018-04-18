@@ -249,9 +249,11 @@ public class ZookeeperLockTest {
                 //创建分布式栅栏
                 DistributedBarrier barrier = new DistributedBarrier(client, lockPath);
                 try {
+                    //设置栅栏 
                     barrier.setBarrier();
                     System.out.println(Thread.currentThread() + "  setBarrier");
                     Thread.sleep(10000);
+                    //移除栅栏
                     barrier.removeBarrier();
                     System.out.println(Thread.currentThread() + "  removeBarrier");
                 } catch (Exception e) {
@@ -318,11 +320,14 @@ public class ZookeeperLockTest {
                     //创建分布式栅栏
                     DistributedDoubleBarrier barrier = new DistributedDoubleBarrier(client, lockPath,5);
                     try {
+                        //进入
                         System.out.println(Thread.currentThread() + "  rearch barrier, enter");
                         barrier.enter();
                         Thread.sleep(1000*sleep);
+                        //计算
                         System.out.println(Thread.currentThread() + "  rearch barrier, work");
                         barrier.leave();
+                        //离开
                         System.out.println(Thread.currentThread() + "  leave barrier, leave ");
                     } catch (Exception e) {
                         System.out.println(e);
