@@ -7,9 +7,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Scanner;
 
+/**
+* @Title: DemoZookeeperLockTest
+* @Description: zeekooper 分布式锁测试
+* @author chy
+* @date 2018/4/26 15:34
+*/
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class DemoApplicationTests {
+public class DemoZookeeperLockTest {
 
     @Test
     public void InterProcessMutex() {
