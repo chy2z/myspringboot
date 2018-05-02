@@ -18,7 +18,6 @@ public class EsModel {
 
     private Date date;
 
-
     public Object getId() {
         return id;
     }
