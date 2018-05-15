@@ -33,4 +33,16 @@ public class StaticChildTest extends StaticParentTest {
         System.out.println( "i=" + i + ",j=" + j );
     }
 
+    /**
+     * 父类（静态变量、静态初始化块）-->子类（静态变量、静态初始化块）-->
+     * 父类（变量、初始化块）--> 父类构造器 -->子类（变量、初始化块）-->子类构造器
+     * @param args
+     */
+    public static void main( String[] args )
+    {
+        new StaticChildTest();
+        System.out.println( "==========================" );
+        new StaticChildTest();
+    }
+
 }
