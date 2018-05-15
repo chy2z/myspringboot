@@ -14,7 +14,7 @@ public class StaticCodeTest {
     /* 变量 */
     public String field = "变量";
 
-    /* 静态初始化块 */
+    /* 静态初始化块 只执行一次 */
     static {
         System.out.println( "静态初始化块 开始" );
         System.out.println( staticField );
@@ -41,6 +41,7 @@ public class StaticCodeTest {
     public static void main( String[] args )
     {
         System.out.println( "main 开始" );
+        new StaticCodeTest();
         new StaticCodeTest();
         System.out.println( "main 结束" );
     }
