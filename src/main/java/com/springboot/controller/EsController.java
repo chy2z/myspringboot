@@ -1,12 +1,15 @@
 package com.springboot.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.springboot.elasticsearch.EsPage;
 import com.springboot.model.EsModel;
 import com.springboot.util.DateUtil;
 import com.springboot.util.ElasticsearchUtil;
 import com.springboot.util.StringUtil;
+import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -74,6 +77,40 @@ public class EsController {
         jsonObject.put("name", "j-" + new Random(100).nextInt());
         jsonObject.put("date", new Date());
         String id = ElasticsearchUtil.addData(jsonObject, indexName, esType, jsonObject.getString("id"));
+        return id;
+    }
+
+    /**
+     * 插入记录
+     * http://127.0.0.1:8080/es/insertComplexJson
+     * @return
+     */
+    @RequestMapping("/insertComplexJson")
+    @ResponseBody
+    public String insertComplexJson() {
+
+        JSONArray array=new JSONArray();
+
+        JSONObject item1 = new JSONObject();
+        item1.put("name", "天猫");
+        item1.put("url", "www.tianmao.com");
+
+        JSONObject item2 = new JSONObject();
+        item2.put("name", "京东");
+        item2.put("url", "www.京东.com");
+
+        array.add(item1);
+        array.add(item2);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", DateUtil.formatDate(new Date()));
+        jsonObject.put("age", 25);
+        jsonObject.put("name", "j-" + new Random(100).nextInt());
+        jsonObject.put("date", new Date());
+        jsonObject.put("details",array);
+
+        String id = ElasticsearchUtil.addData(jsonObject, indexName, esType, jsonObject.getString("id"));
+
         return id;
     }
 
@@ -159,12 +196,38 @@ public class EsController {
     public String queryMatchData() {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         boolean matchPhrase = false;
+        boolean isComplex=true;
         if (matchPhrase == Boolean.TRUE) {
             boolQuery.must(QueryBuilders.matchPhraseQuery("name", "修"));
         } else {
-            boolQuery.must(QueryBuilders.matchQuery("name", "修"));
+            if(isComplex){
+                boolQuery.must(QueryBuilders.matchQuery("details.url", "www.tianmao.com"));
+            }
+            else {
+                boolQuery.must(QueryBuilders.matchQuery("name", "修"));
+            }
         }
         List<Map<String, Object>> list = ElasticsearchUtil.searchListData(indexName, esType, boolQuery, 10, null, null, null);
+        return JSONObject.toJSONString(list);
+    }
+
+    /**
+     * 嵌套查询(未测试)
+     *
+     * @return
+     */
+    @RequestMapping("/queryNestedData")
+    @ResponseBody
+    public String queryNestedData() {
+
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+
+        boolQuery.must(QueryBuilders.matchQuery("details.url", "www.tianmao.com"));
+
+        NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("location",null, ScoreMode.Total);
+
+        List<Map<String, Object>> list = ElasticsearchUtil.searchListData(indexName, esType, nestedQuery, 10, null, null, null);
+
         return JSONObject.toJSONString(list);
     }
 
