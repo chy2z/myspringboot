@@ -2,6 +2,7 @@ package com.springboot.scheduled;
 
 import com.springboot.activemq.queue.QueueSender;
 import com.springboot.activemq.topic.TopicSender;
+import com.springboot.kafka.KfkProducer;
 import com.springboot.mongo.dao.AliYunDao;
 import com.springboot.mongo.model.AliYun;
 import com.springboot.redis.RedisDao;
@@ -28,50 +29,66 @@ import java.util.List;
 /**
  * 异步注解
  */
-@EnableAsync
-public class ScheduledTask {
+    @EnableAsync
+    public class ScheduledTask {
 
-    boolean debug=false;
+        boolean debug=false;
 
-    @Autowired
-    QueueSender queue;
+        @Autowired
+        QueueSender queue;
 
-    @Autowired
-    TopicSender topic;
+        @Autowired
+        TopicSender topic;
 
-    @Autowired
-    AliYunDao aliYunDao;
+        @Autowired
+        AliYunDao aliYunDao;
 
-    @Autowired
-    RedisDao redisDao;
+        @Autowired
+        RedisDao redisDao;
 
-    /**
-     * MQ队列测试
-     */
-    @Async
-    @Scheduled(fixedDelay=50)
-    public void sendQueueTest() {
-        if(debug) {
-            String message = "对列:" + DateUtil.formatDate(new Date());
-            queue.send1(message);
-            queue.send2(message);
+        @Autowired
+        KfkProducer kfkProducer;
+
+        /**
+         * MQ队列测试
+         */
+        @Async
+        @Scheduled(fixedDelay=50)
+        public void sendMQQueueTest() {
+            if(debug) {
+                String message = "对列:" + DateUtil.formatDate(new Date());
+                queue.send1(message);
+                queue.send2(message);
+            }
         }
-    }
 
-    /**
-     * MQ主题测试
-     */
-    @Async
-    @Scheduled(fixedDelay=50)
-    public void sendTopicTest() {
-        if(debug) {
-            String message = "主题:" + DateUtil.formatDate(new Date());
-            topic.send1(message);
-            topic.send2(message);
+        /**
+         * MQ主题测试
+         */
+        @Async
+        @Scheduled(fixedDelay=50)
+        public void sendMQTopicTest() {
+            if(debug) {
+                String message = "主题:" + DateUtil.formatDate(new Date());
+                topic.send1(message);
+                topic.send2(message);
+            }
         }
-    }
 
-    /**
+
+        /**
+         * Kafka主题测试
+         */
+        @Async
+        @Scheduled(fixedDelay=50)
+        public void sendKafkaTopicTest() {
+            if(!debug) {
+                kfkProducer.sendMessage();
+            }
+        }
+
+
+        /**
      * mongo测试
      */
     @Async
