@@ -32,70 +32,70 @@ import java.util.List;
     @EnableAsync
     public class ScheduledTask {
 
-        boolean debug=false;
+    boolean debug = false;
 
-        @Autowired
-        QueueSender queue;
+    @Autowired
+    QueueSender queue;
 
-        @Autowired
-        TopicSender topic;
+    @Autowired
+    TopicSender topic;
 
-        @Autowired
-        AliYunDao aliYunDao;
+    @Autowired
+    AliYunDao aliYunDao;
 
-        @Autowired
-        RedisDao redisDao;
+    @Autowired
+    RedisDao redisDao;
 
-        @Autowired
-        KfkProducer kfkProducer;
+    @Autowired
+    KfkProducer kfkProducer;
 
-        /**
-         * MQ队列测试
-         */
-        @Async
-        @Scheduled(fixedDelay=50)
-        public void sendMQQueueTest() {
-            if(debug) {
-                String message = "对列:" + DateUtil.formatDate(new Date());
-                queue.send1(message);
-                queue.send2(message);
-            }
+    /**
+     * MQ队列测试
+     */
+    @Async
+    @Scheduled(fixedDelay = 50)
+    public void sendMQQueueTest() {
+        if (debug) {
+            String message = "对列:" + DateUtil.formatDate(new Date());
+            queue.send1(message);
+            queue.send2(message);
         }
+    }
 
-        /**
-         * MQ主题测试
-         */
-        @Async
-        @Scheduled(fixedDelay=50)
-        public void sendMQTopicTest() {
-            if(debug) {
-                String message = "主题:" + DateUtil.formatDate(new Date());
-                topic.send1(message);
-                topic.send2(message);
-            }
+    /**
+     * MQ主题测试
+     */
+    @Async
+    @Scheduled(fixedDelay = 50)
+    public void sendMQTopicTest() {
+        if (debug) {
+            String message = "主题:" + DateUtil.formatDate(new Date());
+            topic.send1(message);
+            topic.send2(message);
         }
+    }
 
 
-        /**
-         * Kafka主题测试
-         */
-        @Async
-        @Scheduled(fixedDelay=50)
-        public void sendKafkaTopicTest() {
-            if(!debug) {
-                kfkProducer.sendMessage();
-            }
+    /**
+     * Kafka主题测试
+     */
+    @Async
+    @Scheduled(fixedDelay = 50)
+    public void sendKafkaTopicTest() {
+        if (debug) {
+            kfkProducer.sendMessage();
         }
+    }
 
 
-        /**
+    /**
      * mongo测试
      */
     @Async
-    @Scheduled(fixedDelay=10)
+    @Scheduled(fixedDelay = 10)
     public void insertMongo() {
-        if(debug) {
-            int index=1;
+        if (debug) {
+            int index = 1;
             int row = 100;
             List<AliYun> batchList = new ArrayList<AliYun>();
             AliYun aly = null;
@@ -124,9 +124,9 @@ import java.util.List;
      * redis锁并发测试
      */
     @Async
-    @Scheduled(fixedDelay=300000)
-    public void redisSetnx1(){
-        if(debug) {
+    @Scheduled(fixedDelay = 300000)
+    public void redisSetnx1() {
+        if (debug) {
             RedisLockImpl redisLock = new RedisLockImpl(redisDao.getStringRedisTemplate());
             String key = "chyLock";
             String threadName = "lock-1";
@@ -148,9 +148,9 @@ import java.util.List;
      * redis锁并发测试
      */
     @Async
-    @Scheduled(fixedDelay=300000)
-    public void redisSetnx2(){
-        if(debug) {
+    @Scheduled(fixedDelay = 300000)
+    public void redisSetnx2() {
+        if (debug) {
             RedisLockImpl redisLock = new RedisLockImpl(redisDao.getStringRedisTemplate());
             String key = "chyLock";
             String threadName = "lock-2";
@@ -172,9 +172,9 @@ import java.util.List;
      * redis锁并发测试
      */
     @Async
-    @Scheduled(fixedDelay=300000)
-    public void redisSetnx3(){
-        if(debug) {
+    @Scheduled(fixedDelay = 300000)
+    public void redisSetnx3() {
+        if (debug) {
             RedisLockImpl redisLock = new RedisLockImpl(redisDao.getStringRedisTemplate());
             String key = "chyLock";
             String threadName = "lock-3";
