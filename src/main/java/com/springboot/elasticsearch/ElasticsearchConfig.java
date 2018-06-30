@@ -70,7 +70,12 @@ public class ElasticsearchConfig {
                     .build();
             //配置信息Settings自定义
             transportClient = new PreBuiltTransportClient(esSetting);
+
+            //5.0.2
+            //TransportAddress transportAddress = new InetSocketTransportAddress(InetAddress.getByName(hostName), Integer.valueOf(port));
+
             TransportAddress transportAddress = new TransportAddress(InetAddress.getByName(hostName), Integer.valueOf(port));
+
             transportClient.addTransportAddresses(transportAddress);
         } catch (Exception e) {
             LOGGER.error("elasticsearch TransportClient create error!!", e);

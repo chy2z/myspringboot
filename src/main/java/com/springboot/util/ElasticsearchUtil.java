@@ -207,6 +207,7 @@ public class ElasticsearchUtil {
      * @return
      */
     public static EsPage searchDataPage(String index, String type, int startPage, int pageSize, QueryBuilder query, String fields, String sortField, String highlightField) {
+
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch(index);
         if (StringUtils.isNotEmpty(type)) {
             searchRequestBuilder.setTypes(type.split(","));
@@ -261,6 +262,8 @@ public class ElasticsearchUtil {
 
             return new EsPage(startPage, pageSize, (int) totalHits, sourceList);
         }
+
+
 
         return null;
 
@@ -322,7 +325,6 @@ public class ElasticsearchUtil {
             // 解析对象
             return setSearchResponse(searchResponse, highlightField);
         }
-
         return null;
 
     }
@@ -360,5 +362,6 @@ public class ElasticsearchUtil {
 
         return sourceList;
     }
+
 
 }
