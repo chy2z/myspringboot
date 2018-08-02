@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
 /** 
@@ -41,17 +42,58 @@ public class ZkController {
         Watcher watcher = new Watcher() {
             @Override
             public void process(WatchedEvent watchedEvent) {
-                LOG.info("收到事件通知：State->" + watchedEvent.getState()
-                        + ",Type->：" + watchedEvent.getType()
-                        + ",Path->：" + watchedEvent.getPath());
-                if (Event.KeeperState.SyncConnected == watchedEvent.getState()) {
+                System.out.println("开始执行process方法-----event:"+watchedEvent);
+
+                if(watchedEvent == null){
+                    return;
+                }
+
+                //取得连接状态
+                Event.KeeperState state = watchedEvent.getState();
+                //取得事件类型
+                Event.EventType eventType = watchedEvent.getType();
+
+                //哪一个节点路径发生变更
+                String nodePath = watchedEvent.getPath();
+                String log_process = "Watcher";
+                System.out.println(log_process+"收到事件通知");
+                System.out.println(log_process+"连接状态："+state);
+                System.out.println(log_process+"事件类型："+eventType);
+                System.out.println(log_process+"节点路径："+nodePath);
+
+                //连接成功
+                if(Event.KeeperState.SyncConnected == state ){
+
+                    // 没有任何节点，表示创建连接成功(客户端与服务器端创建连接成功后没有任何节点信息)
+                    if(Event.EventType.None == watchedEvent.getType()){
+                        System.out.println(log_process+"成功链接zookeeper服务器");
+                    }
+                    //当服务器端创建节点的时候触发
+                    else if(Event.EventType.NodeCreated == watchedEvent.getType()){
+                        System.out.println(log_process+" zookeeper服务端创建新的节点");
+                    }
+                    //被监控该节点的数据发生变更的时候触发
+                    else if(Event.EventType.NodeDataChanged == watchedEvent.getType()){
+                        System.out.println(log_process+"节点的数据更新");
+                    }
+                    else if(Event.EventType.NodeChildrenChanged == watchedEvent.getType()){
+                        // 对应本代码而言只能监控根节点的一级节点变更。如：在根节点直接创建一级节点，
+                        //或者删除一级节点时触发。如修改一级节点的数据，不会触发，创建二级节点时也不会触发。
+                        System.out.println("子节点发生变更");
+                    }
+                    else if(Event.EventType.NodeDeleted == watchedEvent.getType()){
+                        System.out.println(log_process+"节点："+nodePath+"被删除");
+                    }
 
                 }
-                if (Event.EventType.NodeCreated == watchedEvent.getType()) {
-
+                else if(Event.KeeperState.Disconnected == state){
+                    System.out.println(log_process+"客户端连接zookeeper服务器端失败");
                 }
-                if (path.equals(watchedEvent.getPath())) {
-
+                else if(Event.KeeperState.Expired == state){
+                    System.out.println(log_process+"客户端与zookeeper服务器端会话失败");
+                }
+                else if(Event.KeeperState.AuthFailed == state){
+                    System.out.println(log_process+"权限认证失败");
                 }
             }
         };
