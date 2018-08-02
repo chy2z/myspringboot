@@ -7,6 +7,8 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
 * @Title: RedisServiceExtend
 * @Description: redis 扩展
@@ -16,10 +18,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RedisServiceExtend  {
 
+    private static String redisCode = "utf-8";
+
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 
-    private static String redisCode = "utf-8";
+    public RedisTemplate<String, String> getRedisTemplate() {
+        return redisTemplate;
+    }
+
+    public void setRedisTemplate(RedisTemplate<String, String> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      * 统计bit位为1的总数
@@ -35,4 +45,14 @@ public class RedisServiceExtend  {
             }
         });
     }
+
+    /**
+     * 批处理命令
+     * @param callback
+     * @return
+     */
+    public List<Object> multi(RedisCallback<List<Object>> callback) {
+        return redisTemplate.execute(callback);
+    }
+
 }
