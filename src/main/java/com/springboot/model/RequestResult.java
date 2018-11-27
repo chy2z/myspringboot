@@ -1,5 +1,7 @@
 package com.springboot.model;
 
+import java.io.Serializable;
+
 /**
 * @Name: RequestResult
 * @Description:  请求结果
@@ -8,7 +10,7 @@ package com.springboot.model;
 * @date 2017/10/18 14:02
 */
 
-public class RequestResult {
+public class RequestResult implements Serializable {
 
     /**
      *  true: 正常操作

@@ -55,4 +55,19 @@ public class RedisServiceExtend  {
         return redisTemplate.execute(callback);
     }
 
+    /**
+     * 获取value
+     * @param key
+     * @return
+     */
+    public byte[] get(final String key){
+        return redisTemplate.execute(new RedisCallback<byte[]>() {
+            @Override
+            public byte[] doInRedis(RedisConnection connection) throws DataAccessException {
+                byte[] result;
+                result = connection.get(key.getBytes());
+                return result;
+            }
+        });
+    }
 }
