@@ -154,41 +154,54 @@ public class DemoRedisIncrementTest {
 
         int count = bitSet.cardinality();
 
+        // 从右往左
+
         // 2进制 0000 0001 0000 0110
 
-        //16进制   0    1    0    6
+        // 16进制   0    1    0    6
 
-        //      byte[0]=6   byte[1]=1
+        // byte[0]=6   byte[1]=1
         byte[] bytes= bitSet.toByteArray();
 
         System.out.println("bytes: " + bytes.length);
 
-        System.out.println("bit 为 1: " + count);
+        System.out.println("bit 为 1的位置: " + count);
 
 
-
-        //redis 二进制数据转换 BitSet 时存在一下问题:
-        //当offset为8的备注时，转换的BitSet统计位置为1的总数不对
-
+        //redis 二进制数据转换
         String key2 = "20180503";
         redisDao.setBit(key2, 1, true);
         redisDao.setBit(key2, 2, true);
         redisDao.setBit(key2, 8, true);
 
-        //"`�"
-
         String value= redisDao.getValue(key2);
 
         System.out.println("value: " + value);
 
-        byte[] vBytes =value.getBytes();
+        byte[] vBytes =redisServiceExtend.get(key2);
 
-        BitSet rBitSet=BitSet.valueOf(vBytes);
+        BitSet rBitSet=fromByteArrayReverse(vBytes);
 
         byte[] rBytes= rBitSet.toByteArray();
 
         System.out.println("bytes: " + rBytes.length);
 
-        System.out.println("bit 为 1: " + rBitSet.cardinality());
+        System.out.println("bit 为 1的位置: " + rBitSet.cardinality());
+    }
+
+    /**
+     * redis中bitmaps二进制存储的结构是从左到右
+     * BitSets二进制存储的结构从右到左
+     * @param bytes
+     * @return
+     */
+    public static BitSet fromByteArrayReverse(final byte[] bytes) {
+        final BitSet bits = new BitSet();
+        for (int i = 0; i < bytes.length * 8; i++) {
+            if ((bytes[i / 8] & (1 << (7 - (i % 8)))) != 0) {
+                bits.set(i);
+            }
+        }
+        return bits;
     }
 }
