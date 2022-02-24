@@ -88,9 +88,10 @@ public class AESUtil {
 
     public static void main(String[] args) throws Exception {
         String src = "{\"total\":1,\"stationStatusInfo\":{\"operationID\":\"123456789\",\"stationID\":\"111111111111111\",\"connectorStatusInfos\":{\"connectorID\":1,\"equipmentID\":\"10000000000000000000001\",\"status\":4,\"currentA\":0,\"currentB\":0,\"currentC\":0,\"voltageA\":0,\"voltageB\":0,\"voltageC\":0,\"soc\":10,}}}";
+        System.out.println("原始字符串:"+src);
         String str = AESUtil.Encrypt(src, "1234567890abcdef", "1234567890abcdef");
         System.out.println("Base64加密后字符串:"+str);
-
+        System.out.println("===========================");
         String des64 = "il7B0BSEjFdzpyKzfOFpvg/Se1CP802RItKYFPfSLRxJ3jf0bVl9hvYOEktPAYW2nd7S8MBcyHYy\n" +
                 "acHKbISq5iTmDzG+ivnR+SZJv3USNTYVMz9rCQVSxd0cLlqsJauko79NnwQJbzDTyLooYoIwz75q\n" +
                 "BOH2/xOMirpeEqRJrF/EQjWekJmGk9RtboXePu2rka+Xm51syBPhiXJAq0GfbfaFu9tNqs/e2Vjj\n" +
